@@ -17,17 +17,11 @@ def instr_gen():
 q = ghidra.app.script.GhidraScript
 for instruction in instr_gen():
     try:
-        if instruction.getMnemonicString() == u'tjl':
-            if list(q.getBytes(ghidra.program.flatapi.FlatProgramAPI(currentProgram),currentAddress.getNewAddress(int(str(instruction).split(' ')[-1],16)), 4)) == tjex_r3_instr:
-                print 'Instruction fixup at : {}'.format(instruction.getAddress())
-                q.removeInstructionAt(ghidra.program.flatapi.FlatProgramAPI(currentProgram), instruction.getAddress())
-                q.setBytes(ghidra.program.flatapi.FlatProgramAPI(currentProgram),instruction.getAddress(),tjex_r3_instr)
-                q.disassemble(ghidra.program.flatapi.FlatProgramAPI(currentProgram), instruction.getAddress())
-            elif list(q.getBytes(ghidra.program.flatapi.FlatProgramAPI(currentProgram),currentAddress.getNewAddress(int(str(instruction).split(' ')[-1],16)), 2)) == tjex_r3_instr[:2]:
-                print 'Instruction fixup no nop at : {}'.format(instruction.getAddress())
-                q.removeInstructionAt(ghidra.program.flatapi.FlatProgramAPI(currentProgram), instruction.getAddress())
-                q.setBytes(ghidra.program.flatapi.FlatProgramAPI(currentProgram),instruction.getAddress(),tjex_r3_instr[:2])
-                q.disassemble(ghidra.program.flatapi.FlatProgramAPI(currentProgram), instruction.getAddress())
+        if instruction.getMnemonicString() == u'tjl' and list(q.getBytes(ghidra.program.flatapi.FlatProgramAPI(currentProgram),currentAddress.getNewAddress(int(str(instruction).split(' ')[-1],16)), 2)) == tjex_r3_instr[:2]:            
+            print 'Instruction fixup at : {}'.format(instruction.getAddress())
+            q.removeInstructionAt(ghidra.program.flatapi.FlatProgramAPI(currentProgram), instruction.getAddress())
+            q.setBytes(ghidra.program.flatapi.FlatProgramAPI(currentProgram),instruction.getAddress(),tjex_r3_instr)
+            q.disassemble(ghidra.program.flatapi.FlatProgramAPI(currentProgram), instruction.getAddress())
     except ghidra.program.model.mem.MemoryAccessException, e:
         continue
 
